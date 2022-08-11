@@ -1,3 +1,11 @@
+resource "aws_lambda_layer_version" "this" {
+  filename   = var.lambda_layer_file_name
+  layer_name = var.lambda_layer_name
+
+  compatible_runtimes = var.compatible_runtimes
+  compatible_architectures = var.compatible_architectures
+}
+
 resource "aws_iam_role" "this" {
     name = var.lambda_role_name
     assume_role_policy = <<EOF
@@ -55,13 +63,6 @@ resource "aws_lambda_function" "this" {
   handler       = "test.lambda_handler"
   runtime = "python3.8"
   depends_on = [aws_iam_policy_attachment.this]
+  layers = [aws_lambda_layer_version.this.arn]
 
-}
-
-resource "aws_lambda_layer_version" "lambda_layer" {
-  filename   = var.lambda_layer_file_name
-  layer_name = var.lambda_layer_name
-
-  compatible_runtimes = var.compatible_runtimes
-  compatible_architectures = var.compatible_architectures
 }
